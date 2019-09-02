@@ -1,6 +1,8 @@
 #include <AFMotor.h>
 #include <Servo.h>              // Add library
-Servo name_servo;               // Define any servo name
+
+Servo myservo;               // Define any servo name
+AF_DCMotor motor1(1);
 
 int joyPin1 = 0;                 
 int joyPin2 = 1; 
@@ -12,30 +14,65 @@ int valx = 0;
 
 void setup() {
   
-name_servo.attach (10);          // Define the servo signal pins
-name_servo.write(0);
+myservo.attach(10);          // Define the servo signal pins
+motor1.setSpeed(0);
 Serial.begin(9600);
 
 }
 
 void loop() {
 
-//  valy = analogRead(joyPin1);
+  valy = analogRead(joyPin1);
   valx = analogRead(joyPin2);
-//  Serial.println(valy);
+  Serial.println(valy);
   Serial.println(valx);
-  //delay(500); 
-  
- if((valx > 1020) && (valx <= 1024))    //left
- {
+ // delay(500); 
 
-    name_servo.write(90);
+ myservo.attach(10);
   
- }else if((valx >= 0) && (valx <= 10))  //right
+ if((valx > 1000) && (valx <= 1024))    //left
  {
-
-    name_servo.write(270);
+    myservo.write(0);
+    delay(100);
+    myservo.detach();
+    goto l;
   
+ }else if((valx >= 0) && (valx <= 10))
+ {
+    myservo.write(180);
+    delay(100);
+    myservo.detach();
+    goto l;
+  
+ }else{
+
+    //Serial.println("Center");
+    myservo.detach();
+    
  }
+
+ 
+  if( (valy > 1000) && (valy <= 1024)){         //backward
+  
+  motor1.setSpeed(255);
+  motor1.run(FORWARD);
+  goto l;
+
+  }
+
+  else if( (valy >= 0) && (valy <= 10) ) {     //forward
+    
+  motor1.setSpeed(255);
+  motor1.run(BACKWARD);
+  goto l;
+
+  }else{
+
+        motor1.setSpeed(0);
+        
+  }
+
+ l:
+ Serial.println();
  
 }
